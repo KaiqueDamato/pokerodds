@@ -24,11 +24,6 @@ struct SettingsSheet: View {
                 // Quick actions section
                 quickActionsSection
                 
-                // Debug section (only in DEBUG builds)
-                #if DEBUG
-                debugSection
-                #endif
-                
                 // Information section
                 informationSection
             }
@@ -341,55 +336,6 @@ struct SettingsSheet: View {
     
     // MARK: - Debug Section (DEBUG only)
     
-    #if DEBUG
-    private var debugSection: some View {
-        Section {
-            // Ad Status
-            VStack(alignment: .leading, spacing: 8) {
-                Text("📊 Status dos Ads")
-                    .font(.headline)
-                
-                Text(AdManager.shared.getAdStatus())
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .padding(.vertical, 4)
-            
-            // Force load ads
-            Button("🔄 Recarregar Todos os Ads") {
-                AdManager.shared.forceLoadAllAds()
-            }
-            
-            // Test interstitial
-            Button("🎯 Testar Interstitial") {
-                dismiss()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    AdManager.shared.forceShowInterstitial()
-                }
-            }
-            
-            // Test rewarded
-            Button("🎁 Testar Rewarded") {
-                dismiss()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    AdManager.shared.forceShowRewardedAd { success in
-                        print("Rewarded ad result: \(success)")
-                    }
-                }
-            }
-            
-            // Reset ad frequency
-            Button("🔄 Reset Frequência") {
-                AdManager.shared.resetAdFrequency()
-            }
-            
-        } header: {
-            Text("🐛 Debug - Ads")
-        } footer: {
-            Text("Seção disponível apenas em builds de DEBUG para testar funcionalidades de anúncios.")
-        }
-    }
-    #endif
 }
 
 // MARK: - Preview

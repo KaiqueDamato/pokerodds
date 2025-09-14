@@ -270,9 +270,6 @@ class OddsViewModel: ObservableObject {
             return
         }
         
-        // Oculta banner durante simulação
-        AdManager.shared.hideBannerDuringSimulation()
-        
         Task {
             await performSimulation()
         }
@@ -397,8 +394,7 @@ class OddsViewModel: ObservableObject {
             simulationState = .error(NSLocalizedString("Simulation failed", comment: "Error message"))
         }
         
-        // Mostra banner novamente após simulação
-        AdManager.shared.showBannerAfterSimulation()
+        // Banner permanece sempre visível
         
         simulationProgress = 0.0
         cancellationToken = nil

@@ -11,25 +11,9 @@ struct ContentView: View {
     @StateObject private var viewModel = OddsViewModel()
     @ObservedObject private var adManager = AdManager.shared
     
-    // Computed property para controlar quando mostrar o banner
+    // Banner sempre visível
     private var shouldShowBanner: Bool {
-        let hasResults = viewModel.simulationResult != nil
-        let isSimulating = viewModel.isSimulationRunning
-        
-        // Atualiza a visibilidade no AdManager
-        adManager.updateBannerVisibility(hasResults: hasResults, isSimulating: isSimulating)
-        
-        // Lógica simplificada: mostra banner quando não está simulando
-        let shouldShow = !isSimulating
-        
-        print("🔍 ContentView Banner Debug:")
-        print("   isSimulating: \(isSimulating)")
-        print("   hasResults: \(hasResults)")
-        print("   adManager.showBannerAd: \(adManager.showBannerAd)")
-        print("   adManager.bannerAdLoaded: \(adManager.bannerAdLoaded)")
-        print("   shouldShow final: \(shouldShow)")
-        
-        return shouldShow
+        return true
     }
     
     var body: some View {
