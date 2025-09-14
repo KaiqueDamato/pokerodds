@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ResultCardView: View {
     let result: SimulationResult
+    @State private var isVisible = false
     
     var body: some View {
         VStack(spacing: 20) {
@@ -26,8 +27,20 @@ struct ResultCardView: View {
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.accentColor.opacity(isVisible ? 0.4 : 0.8), lineWidth: 2)
+                        .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isVisible)
+                )
                 .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 4)
         )
+        .scaleEffect(isVisible ? 1.0 : 0.8)
+        .opacity(isVisible ? 1.0 : 0.0)
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0)) {
+                isVisible = true
+            }
+        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
     }

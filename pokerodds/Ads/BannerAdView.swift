@@ -13,24 +13,33 @@ struct BannerAdView: UIViewRepresentable {
     @ObservedObject var adManager = AdManager.shared
     
     func makeUIView(context: Context) -> BannerView {
-        print("🎯 Criando BannerView...")
-        let banner = adManager.createBannerAd()
+        print("🎯 makeUIView chamado - obtendo BannerView...")
         
-        // Configura o root view controller
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootViewController = windowScene.windows.first?.rootViewController {
-            banner.rootViewController = rootViewController
-            print("✅ Root view controller configurado")
-        } else {
-            print("⚠️ Root view controller não encontrado")
-        }
+        // Usa o banner já criado ou cria um novo
+        let banner = adManager.bannerAd ?? adManager.createBannerAd()
         
-        // Força o carregamento do banner
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            adManager.forceLoadBannerAd()
-        }
+        // Garante que o root view controller está configurado
+        configureRootViewController(for: banner)
         
         return banner
+    }
+    
+    private func configureRootViewController(for banner: BannerView) {
+        if banner.rootViewController == nil {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first,
+               let rootViewController = window.rootViewController {
+                banner.rootViewController = rootViewController
+                print("✅ Root view controller configurado no makeUIView: \(type(of: rootViewController))")
+            } else {
+                print("⚠️ Root view controller não encontrado - tentando novamente...")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.configureRootViewController(for: banner)
+                }
+            }
+        } else {
+            print("✅ Root view controller já configurado")
+        }
     }
     
     func updateUIView(_ uiView: BannerView, context: Context) {
@@ -42,48 +51,77 @@ struct BannerAdView: UIViewRepresentable {
     }
 }
 
-/// Container view que controla a exibição do banner ad
+/// Container view que controla a exibição do banner ad seguindo Apple Design Guidelines
 struct AdBannerContainer: View {
     @ObservedObject private var adManager = AdManager.shared
     let showAd: Bool
     
     var body: some View {
-        if showAd && adManager.showBannerAd {
-            VStack(spacing: 0) {
-                // Separador sutil
-                Rectangle()
-                    .fill(Color.secondary.opacity(0.2))
-                    .frame(height: 0.5)
-                
-                // Banner ad ou placeholder
+        VStack(spacing: 0) {
+            // Separador sutil seguindo design system da Apple
+            Divider()
+                .background(Color(.separator))
+            
+            // Banner ad ou placeholder - SEMPRE MOSTRA ALGO PARA DEBUG
+            if showAd {
                 if adManager.bannerAdLoaded {
                     BannerAdView()
-                        .frame(width: 320, height: 50)
+                        .frame(maxWidth: .infinity, maxHeight: 50)
+                        .frame(height: 50)
                         .background(Color(.systemBackground))
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .clipped()
                 } else {
-                    // Placeholder para debug
-                    VStack {
-                        Text("🔄 Carregando anúncio...")
+                    // Placeholder para debug - SEMPRE VISÍVEL
+                    VStack(spacing: 4) {
+                        HStack {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                            
+                            Text("Carregando anúncio...")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Spacer()
+                            
+                            Button("Recarregar") {
+                                print("🔧 Botão Recarregar pressionado")
+                                adManager.forceLoadBannerAd()
+                            }
                             .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Button("Tentar novamente") {
-                            adManager.forceLoadBannerAd()
+                            .foregroundColor(.accentColor)
                         }
-                        .font(.caption2)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(4)
+                        
+                        // Info de debug
+                        Text("ID: \(AdConfiguration.bannerAdUnitID)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary.opacity(0.7))
                     }
-                    .frame(width: 320, height: 50)
+                    .padding(.horizontal, 16)
+                    .frame(maxWidth: .infinity, maxHeight: 50)
+                    .frame(height: 50)
                     .background(Color(.systemBackground))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 4)
-                            .stroke(Color.blue.opacity(0.3), lineWidth: 1)
-                    )
                 }
+            } else {
+                // Debug: mostra por que não está aparecendo
+                HStack {
+                    Text("🚫 Banner oculto (showAd: \(showAd))")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                    
+                    Spacer()
+                    
+                    Button("Debug") {
+                        print("🔧 AdManager Debug:")
+                        print("   showBannerAd: \(adManager.showBannerAd)")
+                        print("   bannerAdLoaded: \(adManager.bannerAdLoaded)")
+                    }
+                    .font(.caption)
+                    .foregroundColor(.blue)
+                }
+                .padding(.horizontal, 16)
+                .frame(maxWidth: .infinity, maxHeight: 50)
+                .frame(height: 50)
+                .background(Color(.systemGray6))
             }
         }
     }

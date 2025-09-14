@@ -26,9 +26,16 @@ class AdManager: NSObject, ObservableObject {
     
     // MARK: - Private Properties
     
-    private var bannerAd: BannerView?
+    private var _bannerAd: BannerView?
     private var interstitialAd: InterstitialAd?
     private var rewardedAd: RewardedAd?
+    
+    // MARK: - Public Properties
+    
+    /// Acesso ao banner ad atual
+    var bannerAd: BannerView? {
+        return _bannerAd
+    }
     
     // Controle de frequência
     private var lastInterstitialTime: Date?
@@ -47,14 +54,20 @@ class AdManager: NSObject, ObservableObject {
     
     override init() {
         super.init()
+        print("🚀 AdManager inicializando...")
+        print("   showBannerAd inicial: \(showBannerAd)")
         setupAds()
     }
     
     // MARK: - Setup
     
     private func setupAds() {
+        print("🔧 Configurando ads...")
+        print("   showBannerAd antes do setup: \(showBannerAd)")
+        
         // Inicializa Google AdMob com a API correta
         MobileAds.shared.start { [weak self] _ in
+            print("✅ Google AdMob inicializado")
             DispatchQueue.main.async {
                 self?.loadAllAds()
             }
@@ -62,6 +75,12 @@ class AdManager: NSObject, ObservableObject {
     }
     
     private func loadAllAds() {
+        // Força criação do banner se não existir
+        if _bannerAd == nil {
+            print("🔧 Criando banner ad durante inicialização...")
+            _ = createBannerAd()
+        }
+        
         loadBannerAd()
         loadInterstitialAd()
         loadRewardedAd()
@@ -70,10 +89,22 @@ class AdManager: NSObject, ObservableObject {
     // MARK: - Banner Ad
     
     func createBannerAd() -> BannerView {
+        print("🎯 Criando novo BannerView...")
         let banner = BannerView(adSize: AdSizeBanner)
         banner.adUnitID = bannerAdUnitID
         banner.delegate = self
-        self.bannerAd = banner
+        
+        // Configura root view controller se disponível
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let rootViewController = window.rootViewController {
+            banner.rootViewController = rootViewController
+            print("✅ Root view controller configurado automaticamente: \(type(of: rootViewController))")
+        } else {
+            print("⚠️ Root view controller não disponível ainda")
+        }
+        
+        self._bannerAd = banner
         return banner
     }
     
@@ -83,26 +114,63 @@ class AdManager: NSObject, ObservableObject {
             return
         }
         
-        print("🔄 Carregando banner ad...")
+        print("🔄 Carregando banner ad com ID: \(bannerAdUnitID)")
+        print("   Banner delegate configurado: \(banner.delegate != nil)")
+        print("   Root view controller configurado: \(banner.rootViewController != nil)")
+        
         let request = Request()
         banner.load(request)
+        
+        // Timeout de segurança - se não carregar em 10 segundos, tenta novamente
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { [weak self] in
+            if !(self?.bannerAdLoaded ?? true) {
+                print("⏰ Timeout do banner ad - tentando recarregar...")
+                self?.loadBannerAd()
+            }
+        }
     }
     
     /// Força o carregamento do banner ad (útil para debug)
     func forceLoadBannerAd() {
         print("🔧 Forçando carregamento do banner ad...")
-        if bannerAd == nil {
+        if _bannerAd == nil {
             _ = createBannerAd()
         }
         loadBannerAd()
     }
     
     func hideBannerDuringSimulation() {
-        showBannerAd = false
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showBannerAd = false
+        }
     }
     
     func showBannerAfterSimulation() {
-        showBannerAd = true
+        // Aguarda um pouco após a simulação para não competir com o resultado
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                self.showBannerAd = true
+            }
+        }
+    }
+    
+    /// Controla a visibilidade do banner baseado no estado da aplicação
+    func updateBannerVisibility(hasResults: Bool, isSimulating: Bool) {
+        // Simplificado: sempre mostra banner quando não está simulando
+        let shouldShow = !isSimulating
+        
+        print("🔄 updateBannerVisibility:")
+        print("   hasResults: \(hasResults)")
+        print("   isSimulating: \(isSimulating)")
+        print("   shouldShow: \(shouldShow)")
+        print("   showBannerAd atual: \(showBannerAd)")
+        
+        if shouldShow != showBannerAd {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                showBannerAd = shouldShow
+            }
+            print("   showBannerAd atualizado para: \(showBannerAd)")
+        }
     }
     
     // MARK: - Interstitial Ad
@@ -317,17 +385,38 @@ class AdManager: NSObject, ObservableObject {
     }
 }
 
-// MARK: - GADBannerViewDelegate
+// MARK: - BannerViewDelegate
 
 extension AdManager: BannerViewDelegate {
     func bannerViewDidReceiveAd(_ bannerView: BannerView) {
+        print("✅ Banner ad carregado com sucesso!")
+        print("   Banner size: \(bannerView.frame.size)")
         bannerAdLoaded = true
-        print("Banner ad carregado com sucesso")
     }
     
     func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
+        print("❌ Erro ao carregar banner: \(error.localizedDescription)")
+        print("   Error code: \((error as NSError).code)")
+        print("   Error domain: \((error as NSError).domain)")
         bannerAdLoaded = false
-        print("Erro ao carregar banner: \(error.localizedDescription)")
+        
+        // Tenta recarregar após 5 segundos em caso de erro
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
+            print("🔄 Tentando recarregar banner após erro...")
+            self?.loadBannerAd()
+        }
+    }
+    
+    func bannerViewWillPresentScreen(_ bannerView: BannerView) {
+        print("📱 Banner vai apresentar tela")
+    }
+    
+    func bannerViewWillDismissScreen(_ bannerView: BannerView) {
+        print("📱 Banner vai fechar tela")
+    }
+    
+    func bannerViewDidDismissScreen(_ bannerView: BannerView) {
+        print("📱 Banner fechou tela")
     }
 }
 

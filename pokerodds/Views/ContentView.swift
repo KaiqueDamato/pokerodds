@@ -11,53 +11,125 @@ struct ContentView: View {
     @StateObject private var viewModel = OddsViewModel()
     @ObservedObject private var adManager = AdManager.shared
     
+    // Computed property para controlar quando mostrar o banner
+    private var shouldShowBanner: Bool {
+        let hasResults = viewModel.simulationResult != nil
+        let isSimulating = viewModel.isSimulationRunning
+        
+        // Atualiza a visibilidade no AdManager
+        adManager.updateBannerVisibility(hasResults: hasResults, isSimulating: isSimulating)
+        
+        // Lógica simplificada: mostra banner quando não está simulando
+        let shouldShow = !isSimulating
+        
+        print("🔍 ContentView Banner Debug:")
+        print("   isSimulating: \(isSimulating)")
+        print("   hasResults: \(hasResults)")
+        print("   adManager.showBannerAd: \(adManager.showBannerAd)")
+        print("   adManager.bannerAdLoaded: \(adManager.bannerAdLoaded)")
+        print("   shouldShow final: \(shouldShow)")
+        
+        return shouldShow
+    }
+    
     var body: some View {
         NavigationView {
-            ZStack {
-                // Background
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    LazyVStack(spacing: 24) {
-                        // Header
-                        headerView
-                        
-                        // Player hand section
-                        playerHandSection
-                        
-                        // Community cards section
-                        communityCardsSection
-                        
-                        // Action buttons
-                        actionButtonsSection
-                        
-                        // Results section
-                        if let result = viewModel.simulationResult, viewModel.simulationState == .completed {
-                            ResultCardView(result: result)
+            VStack(spacing: 0) {
+                // Main content
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        LazyVStack(spacing: 20) { // Reduzido de 24 para 20
+                            // Header
+                            headerView
+                            
+                            // Player hand section
+                            playerHandSection
+                            
+                            // Community cards section
+                            communityCardsSection
+                            
+                            // Action buttons
+                            actionButtonsSection
+                            
+                            // Results section
+                            if let result = viewModel.simulationResult, viewModel.simulationState == .completed {
+                                GeometryReader { geometry in
+                                    ResultCardView(result: result)
+                                        .onAppear {
+                                            print("🎯 ResultCardView apareceu!")
+                                            print("🎯 Posição Y: \(geometry.frame(in: .global).minY)")
+                                            print("🎯 Altura da tela: \(UIScreen.main.bounds.height)")
+                                            
+                                            // Se o resultado está fora da tela, força scroll
+                                            let screenHeight = UIScreen.main.bounds.height
+                                            let resultY = geometry.frame(in: .global).minY
+                                            
+                                            if resultY > screenHeight * 0.8 {
+                                                print("🎯 Resultado fora da tela, forçando scroll...")
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                                    withAnimation(.easeInOut(duration: 1.0)) {
+                                                        proxy.scrollTo("simulationResult", anchor: .center)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                }
+                                .frame(height: 300) // Altura estimada do ResultCardView
+                                .id("simulationResult") // ID para scroll automático
                                 .transition(.scale.combined(with: .opacity))
-                        } else if viewModel.validPlayerCards.isEmpty && viewModel.validCommunityCards.isEmpty {
-                            EmptyStateView()
-                                .transition(.opacity)
-                        }
-                        
-                        // Error state
-                        if let error = viewModel.errorMessage {
-                            ErrorStateView(message: error) {
-                                viewModel.errorMessage = nil
+                                .debugScroll(id: "simulationResult")
+                            } else if viewModel.validPlayerCards.isEmpty && viewModel.validCommunityCards.isEmpty {
+                                EmptyStateView()
+                                    .transition(.opacity)
                             }
-                            .transition(.scale.combined(with: .opacity))
+                            
+                            // Error state
+                            if let error = viewModel.errorMessage {
+                                ErrorStateView(message: error) {
+                                    viewModel.errorMessage = nil
+                                }
+                                .transition(.scale.combined(with: .opacity))
+                            }
+                            
+                            // Spacer para garantir que o conteúdo não fique colado no banner
+                            Spacer(minLength: 100) // Aumentado para dar mais espaço
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                    }
+                    .background(Color(.systemGroupedBackground))
+                    .onChange(of: viewModel.shouldScrollToResult) { shouldScroll in
+                        if shouldScroll {
+                            print("🎯 Trigger de scroll ativado: \(shouldScroll)")
+                            print("🎯 Estado da simulação: \(viewModel.simulationState)")
+                            print("🎯 Resultado existe: \(viewModel.simulationResult != nil)")
+                            
+                            // Múltiplas tentativas de scroll para garantir que funcione
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                print("🎯 Tentativa 1 de scroll...")
+                                withAnimation(.easeInOut(duration: 0.8)) {
+                                    proxy.scrollTo("simulationResult", anchor: .center)
+                                }
+                            }
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                print("🎯 Tentativa 2 de scroll...")
+                                withAnimation(.easeInOut(duration: 0.6)) {
+                                    proxy.scrollTo("simulationResult", anchor: .center)
+                                }
+                            }
+                            
+                            // Reset do trigger após usar
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                viewModel.shouldScrollToResult = false
+                            }
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
                 }
                 
-                // Banner ad na parte inferior
-                VStack {
-                    Spacer()
-                    AdBannerContainer(showAd: !viewModel.isSimulationRunning)
-                }
+                // Banner ad fixo na parte inferior, respeitando safe area
+                AdBannerContainer(showAd: shouldShowBanner)
+                    .background(Color(.systemBackground))
             }
             .navigationTitle(NSLocalizedString("Poker Odds", comment: "App title"))
             .navigationBarTitleDisplayMode(.large)
@@ -287,6 +359,41 @@ struct ContentView: View {
                 NSLocalizedString("Cancel simulation", comment: "Cancel button accessibility") :
                 NSLocalizedString("Calculate poker odds", comment: "Calculate button accessibility")
             )
+            
+            // Indicador de resultado disponível
+            if viewModel.simulationResult != nil && viewModel.simulationState == .completed {
+                HStack {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .foregroundColor(.accentColor)
+                        .font(.title3)
+                        .scaleEffect(1.1)
+                        .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: viewModel.simulationResult != nil)
+                    
+                    Text("Resultado disponível abaixo")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.down")
+                        .foregroundColor(.accentColor)
+                        .font(.caption)
+                        .opacity(0.7)
+                        .offset(y: 2)
+                        .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: viewModel.simulationResult != nil)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(.systemGray6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.accentColor.opacity(0.3), lineWidth: 1)
+                        )
+                )
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
             
             // Progress bar
             if viewModel.simulationState == .running {

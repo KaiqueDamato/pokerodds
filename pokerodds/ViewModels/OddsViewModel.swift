@@ -49,6 +49,9 @@ class OddsViewModel: ObservableObject {
     /// Resultado atual da simulação
     @Published var simulationResult: SimulationResult?
     
+    /// Trigger para scroll automático ao resultado
+    @Published var shouldScrollToResult = false
+    
     /// Progresso da simulação (0.0 a 1.0)
     @Published var simulationProgress: Double = 0.0
     
@@ -270,6 +273,11 @@ class OddsViewModel: ObservableObject {
         if let result = result {
             simulationResult = result
             simulationState = .completed
+            
+            // Trigger scroll para o resultado após um pequeno delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.shouldScrollToResult = true
+            }
             
             // Feedback háptico de sucesso
             let impactFeedback = UIImpactFeedbackGenerator(style: .light)

@@ -4,6 +4,11 @@
 <dict>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-8913194362956705~6933001901</string>
+	<key>NSServices</key>
+	<array>
+		<dict/>
+		<dict/>
+	</array>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
@@ -322,11 +327,6 @@
 			<key>SKAdNetworkIdentifier</key>
 			<string>zq492l623r.skadnetwork</string>
 		</dict>
-	</array>
-	<key>NSServices</key>
-	<array>
-		<dict/>
-		<dict/>
 	</array>
 </dict>
 </plist>
