@@ -163,6 +163,9 @@ class OddsViewModel: ObservableObject {
             return
         }
         
+        // Oculta banner durante simulação
+        AdManager.shared.hideBannerDuringSimulation()
+        
         Task {
             await performSimulation()
         }
@@ -271,11 +274,17 @@ class OddsViewModel: ObservableObject {
             // Feedback háptico de sucesso
             let impactFeedback = UIImpactFeedbackGenerator(style: .light)
             impactFeedback.impactOccurred()
+            
+            // Notifica AdManager sobre cálculo completado
+            AdManager.shared.onCalculationCompleted()
         } else if cancellationToken?.isCancelled == true {
             simulationState = .cancelled
         } else {
             simulationState = .error(NSLocalizedString("Simulation failed", comment: "Error message"))
         }
+        
+        // Mostra banner novamente após simulação
+        AdManager.shared.showBannerAfterSimulation()
         
         simulationProgress = 0.0
         cancellationToken = nil

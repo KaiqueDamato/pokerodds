@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = OddsViewModel()
+    @ObservedObject private var adManager = AdManager.shared
     
     var body: some View {
         NavigationView {
@@ -50,6 +51,12 @@ struct ContentView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 16)
+                }
+                
+                // Banner ad na parte inferior
+                VStack {
+                    Spacer()
+                    AdBannerContainer(showAd: !viewModel.isSimulationRunning)
                 }
             }
             .navigationTitle(NSLocalizedString("Poker Odds", comment: "App title"))

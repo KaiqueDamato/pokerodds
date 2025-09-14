@@ -18,8 +18,16 @@ struct SettingsSheet: View {
                 // Simulation settings section
                 simulationSettingsSection
                 
+                // Premium features section
+                premiumFeaturesSection
+                
                 // Quick actions section
                 quickActionsSection
+                
+                // Debug section (only in DEBUG builds)
+                #if DEBUG
+                debugSection
+                #endif
                 
                 // Information section
                 informationSection
@@ -138,6 +146,41 @@ struct SettingsSheet: View {
         }
     }
     
+    // MARK: - Premium Features Section
+    
+    private var premiumFeaturesSection: some View {
+        Section {
+            // High precision simulation
+            RewardedAdButton(
+                title: NSLocalizedString("High Precision Mode", comment: "Premium feature title"),
+                subtitle: NSLocalizedString("Unlock 200,000 iterations for maximum accuracy", comment: "Premium feature description"),
+                icon: "speedometer"
+            ) {
+                // Unlock high precision temporarily
+                viewModel.updateIterations(200000)
+                
+                // Show success message
+                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                impactFeedback.impactOccurred()
+            }
+            
+            // Detailed analysis (future feature)
+            RewardedAdButton(
+                title: NSLocalizedString("Street Analysis", comment: "Premium feature title"),
+                subtitle: NSLocalizedString("Coming soon: Odds breakdown by street", comment: "Premium feature description"),
+                icon: "chart.bar.fill"
+            ) {
+                // Future feature - detailed street-by-street analysis
+                print("Street analysis feature unlocked (coming soon)")
+            }
+            
+        } header: {
+            Text(NSLocalizedString("Premium Features", comment: "Premium section header"))
+        } footer: {
+            Text(NSLocalizedString("Watch short ads to unlock premium features temporarily. No subscription required!", comment: "Premium section footer"))
+        }
+    }
+    
     // MARK: - Quick Actions Section
     
     private var quickActionsSection: some View {
@@ -207,6 +250,58 @@ struct SettingsSheet: View {
             }
         }
     }
+    
+    // MARK: - Debug Section (DEBUG only)
+    
+    #if DEBUG
+    private var debugSection: some View {
+        Section {
+            // Ad Status
+            VStack(alignment: .leading, spacing: 8) {
+                Text("📊 Status dos Ads")
+                    .font(.headline)
+                
+                Text(AdManager.shared.getAdStatus())
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.vertical, 4)
+            
+            // Force load ads
+            Button("🔄 Recarregar Todos os Ads") {
+                AdManager.shared.forceLoadAllAds()
+            }
+            
+            // Test interstitial
+            Button("🎯 Testar Interstitial") {
+                dismiss()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    AdManager.shared.forceShowInterstitial()
+                }
+            }
+            
+            // Test rewarded
+            Button("🎁 Testar Rewarded") {
+                dismiss()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    AdManager.shared.forceShowRewardedAd { success in
+                        print("Rewarded ad result: \(success)")
+                    }
+                }
+            }
+            
+            // Reset ad frequency
+            Button("🔄 Reset Frequência") {
+                AdManager.shared.resetAdFrequency()
+            }
+            
+        } header: {
+            Text("🐛 Debug - Ads")
+        } footer: {
+            Text("Seção disponível apenas em builds de DEBUG para testar funcionalidades de anúncios.")
+        }
+    }
+    #endif
 }
 
 // MARK: - Preview

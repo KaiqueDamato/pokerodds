@@ -12,8 +12,8 @@ import GoogleMobileAds // Package is configured but needs Xcode interface fix
 struct PokerOddsApp: App {
     
     init() {
-        // TODO: Initialize Google AdMob when import is fixed
-        // GADMobileAds.sharedInstance().start(completionHandler: nil)
+        // Initialize Google AdMob
+        MobileAds.shared.start()
     }
     
     var body: some Scene {
