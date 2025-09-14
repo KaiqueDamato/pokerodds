@@ -1,0 +1,139 @@
+/* 
+   Localizable.strings (English)
+   PokerOdds - Texas Hold'em Poker Probability Calculator
+   
+   All application text strings in English.
+*/
+
+/* Main Screen - Header */
+"PokerOdds" = "PokerOdds";
+"Calculate your winning odds against one opponent" = "Calculate your winning odds against one opponent";
+
+/* Card Selection */
+"Your Hand" = "Your Hand";
+"Community Cards" = "Community Cards";
+"Select card" = "Select card";
+"Clear selection" = "Clear selection";
+"Done" = "Done";
+
+/* Card Positions */
+"Hole Card 1" = "Hole Card 1";
+"Hole Card 2" = "Hole Card 2";
+"Flop 1" = "Flop 1";
+"Flop 2" = "Flop 2";
+"Flop 3" = "Flop 3";
+"Turn" = "Turn";
+"River" = "River";
+
+/* Results */
+"Results" = "Results";
+"Win" = "Win";
+"Tie" = "Tie";
+"Loss" = "Loss";
+
+/* Simulation */
+"Calculate Odds" = "Calculate Odds";
+"Cancel Simulation" = "Cancel Simulation";
+"Calculating..." = "Calculating...";
+"Simulation complete!" = "Simulation complete!";
+"Simulation cancelled" = "Simulation cancelled";
+
+/* Settings */
+"Settings" = "Settings";
+"Simulation Settings" = "Simulation Settings";
+"Iterations" = "Iterations";
+"iterations" = "iterations";
+"More iterations = more accurate results, but takes longer" = "More iterations = more accurate results, but takes longer";
+"Fewer" = "Fewer";
+"More Accurate" = "More Accurate";
+"Quick Actions" = "Quick Actions";
+"Reset All Cards" = "Reset All Cards";
+"Reset" = "Reset";
+"Fast Mode" = "Fast Mode";
+"Use 8,000 iterations for faster results" = "Use 8,000 iterations for faster results";
+"Information" = "Information";
+"This calculator simulates thousands of random scenarios to estimate your winning probability against one unknown opponent in Texas Hold'em poker." = "This calculator simulates thousands of random scenarios to estimate your winning probability against one unknown opponent in Texas Hold'em poker.";
+"Results are statistical estimates and may vary between simulations." = "Results are statistical estimates and may vary between simulations.";
+
+/* Empty States */
+"Select your 2 hole cards to get started" = "Select your 2 hole cards to get started";
+"Community cards are optional" = "Community cards are optional";
+"No results yet" = "No results yet";
+"Select your cards and tap Calculate" = "Select your cards and tap Calculate";
+
+/* Error States */
+"Invalid Selection" = "Invalid Selection";
+"Each card can only be selected once" = "Each card can only be selected once";
+"You must select exactly 2 hole cards" = "You must select exactly 2 hole cards";
+"Simulation Error" = "Simulation Error";
+"Unable to calculate odds. Please try again." = "Unable to calculate odds. Please try again.";
+
+/* Accessibility Labels */
+"Empty card slot - %@" = "Empty card slot - %@";
+"Selected card - %@ of %@" = "Selected card - %@ of %@";
+"Tap to select a card" = "Tap to select a card";
+"Tap to change card" = "Tap to change card";
+"Calculate poker odds" = "Calculate poker odds";
+"Cancel simulation" = "Cancel simulation";
+"Help" = "Help";
+"Close settings" = "Close settings";
+"Reset all selected cards" = "Reset all selected cards";
+
+/* Confirmation Dialog */
+"Are you sure?" = "Are you sure?";
+"This will clear all selected cards." = "This will clear all selected cards.";
+"Cancel" = "Cancel";
+
+/* Card Suits - Display Names */
+"Spades" = "Spades";
+"Hearts" = "Hearts";
+"Diamonds" = "Diamonds";
+"Clubs" = "Clubs";
+
+/* Card Ranks - Display Names */
+"Ace" = "Ace";
+"King" = "King";
+"Queen" = "Queen";
+"Jack" = "Jack";
+"Ten" = "Ten";
+"Nine" = "Nine";
+"Eight" = "Eight";
+"Seven" = "Seven";
+"Six" = "Six";
+"Five" = "Five";
+"Four" = "Four";
+"Three" = "Three";
+"Two" = "Two";
+
+/* Hand Rankings */
+"Royal Flush" = "Royal Flush";
+"Straight Flush" = "Straight Flush";
+"Four of a Kind" = "Four of a Kind";
+"Full House" = "Full House";
+"Flush" = "Flush";
+"Straight" = "Straight";
+"Three of a Kind" = "Three of a Kind";
+"Two Pair" = "Two Pair";
+"One Pair" = "One Pair";
+"High Card" = "High Card";
+
+/* Time and Performance */
+"seconds" = "seconds";
+"ms" = "ms";
+"Elapsed time" = "Elapsed time";
+
+/* Poker Terms */
+"Pre-flop" = "Pre-flop";
+"Post-flop" = "Post-flop";
+"Heads-up" = "Heads-up";
+"Opponent" = "Opponent";
+"Unknown opponent" = "Unknown opponent";
+
+/* Numbers and Percentages */
+"%" = "%";
+"thousand" = "thousand";
+"million" = "million";
+
+/* Tutorial/Help */
+"How to use" = "How to use";
+"Select your two hole cards, optionally add community cards, then tap Calculate Odds to see your winning probability." = "Select your two hole cards, optionally add community cards, then tap Calculate Odds to see your winning probability.";

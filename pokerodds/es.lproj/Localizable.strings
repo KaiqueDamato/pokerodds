@@ -1,0 +1,139 @@
+/* 
+   Localizable.strings (Spanish)
+   PokerOdds - Calculadora de Probabilidades de Poker Texas Hold'em
+   
+   Todas las cadenas de texto de la aplicación en español.
+*/
+
+/* Main Screen - Header */
+"PokerOdds" = "PokerOdds";
+"Calculate your winning odds against one opponent" = "Calcula tus probabilidades de victoria contra un oponente";
+
+/* Card Selection */
+"Your Hand" = "Tu Mano";
+"Community Cards" = "Cartas Comunitarias";
+"Select card" = "Seleccionar carta";
+"Clear selection" = "Limpiar selección";
+"Done" = "Hecho";
+
+/* Card Positions */
+"Hole Card 1" = "Carta Personal 1";
+"Hole Card 2" = "Carta Personal 2";
+"Flop 1" = "Flop 1";
+"Flop 2" = "Flop 2";
+"Flop 3" = "Flop 3";
+"Turn" = "Turn";
+"River" = "River";
+
+/* Results */
+"Results" = "Resultados";
+"Win" = "Victoria";
+"Tie" = "Empate";
+"Loss" = "Derrota";
+
+/* Simulation */
+"Calculate Odds" = "Calcular Probabilidades";
+"Cancel Simulation" = "Cancelar Simulación";
+"Calculating..." = "Calculando...";
+"Simulation complete!" = "¡Simulación completada!";
+"Simulation cancelled" = "Simulación cancelada";
+
+/* Settings */
+"Settings" = "Configuración";
+"Simulation Settings" = "Configuración de Simulación";
+"Iterations" = "Iteraciones";
+"iterations" = "iteraciones";
+"More iterations = more accurate results, but takes longer" = "Más iteraciones = resultados más precisos, pero toma más tiempo";
+"Fewer" = "Menos";
+"More Accurate" = "Más Preciso";
+"Quick Actions" = "Acciones Rápidas";
+"Reset All Cards" = "Reiniciar Todas las Cartas";
+"Reset" = "Reiniciar";
+"Fast Mode" = "Modo Rápido";
+"Use 8,000 iterations for faster results" = "Usar 8,000 iteraciones para resultados más rápidos";
+"Information" = "Información";
+"This calculator simulates thousands of random scenarios to estimate your winning probability against one unknown opponent in Texas Hold'em poker." = "Esta calculadora simula miles de escenarios aleatorios para estimar tu probabilidad de victoria contra un oponente desconocido en poker Texas Hold'em.";
+"Results are statistical estimates and may vary between simulations." = "Los resultados son estimaciones estadísticas y pueden variar entre simulaciones.";
+
+/* Empty States */
+"Select your 2 hole cards to get started" = "Selecciona tus 2 cartas personales para comenzar";
+"Community cards are optional" = "Las cartas comunitarias son opcionales";
+"No results yet" = "Aún no hay resultados";
+"Select your cards and tap Calculate" = "Selecciona tus cartas y toca Calcular";
+
+/* Error States */
+"Invalid Selection" = "Selección Inválida";
+"Each card can only be selected once" = "Cada carta solo puede seleccionarse una vez";
+"You must select exactly 2 hole cards" = "Debes seleccionar exactamente 2 cartas personales";
+"Simulation Error" = "Error de Simulación";
+"Unable to calculate odds. Please try again." = "No se pudieron calcular las probabilidades. Inténtalo de nuevo.";
+
+/* Accessibility Labels */
+"Empty card slot - %@" = "Ranura de carta vacía - %@";
+"Selected card - %@ of %@" = "Carta seleccionada - %@ de %@";
+"Tap to select a card" = "Toca para seleccionar una carta";
+"Tap to change card" = "Toca para cambiar carta";
+"Calculate poker odds" = "Calcular probabilidades de poker";
+"Cancel simulation" = "Cancelar simulación";
+"Help" = "Ayuda";
+"Close settings" = "Cerrar configuración";
+"Reset all selected cards" = "Reiniciar todas las cartas seleccionadas";
+
+/* Confirmation Dialog */
+"Are you sure?" = "¿Estás seguro?";
+"This will clear all selected cards." = "Esto borrará todas las cartas seleccionadas.";
+"Cancel" = "Cancelar";
+
+/* Card Suits - Display Names */
+"Spades" = "Picas";
+"Hearts" = "Corazones";
+"Diamonds" = "Diamantes";
+"Clubs" = "Tréboles";
+
+/* Card Ranks - Display Names */
+"Ace" = "As";
+"King" = "Rey";
+"Queen" = "Reina";
+"Jack" = "Jota";
+"Ten" = "Diez";
+"Nine" = "Nueve";
+"Eight" = "Ocho";
+"Seven" = "Siete";
+"Six" = "Seis";
+"Five" = "Cinco";
+"Four" = "Cuatro";
+"Three" = "Tres";
+"Two" = "Dos";
+
+/* Hand Rankings (for future use) */
+"Royal Flush" = "Escalera Real";
+"Straight Flush" = "Escalera de Color";
+"Four of a Kind" = "Póker";
+"Full House" = "Full House";
+"Flush" = "Color";
+"Straight" = "Escalera";
+"Three of a Kind" = "Trío";
+"Two Pair" = "Doble Pareja";
+"One Pair" = "Pareja";
+"High Card" = "Carta Alta";
+
+/* Time and Performance */
+"seconds" = "segundos";
+"ms" = "ms";
+"Elapsed time" = "Tiempo transcurrido";
+
+/* Poker Terms */
+"Pre-flop" = "Pre-flop";
+"Post-flop" = "Post-flop";
+"Heads-up" = "Heads-up";
+"Opponent" = "Oponente";
+"Unknown opponent" = "Oponente desconocido";
+
+/* Numbers and Percentages */
+"%" = "%";
+"thousand" = "mil";
+"million" = "millón";
+
+/* Tutorial/Help (for future use) */
+"How to use" = "Cómo usar";
+"Select your two hole cards, optionally add community cards, then tap Calculate Odds to see your winning probability." = "Selecciona tus dos cartas personales, opcionalmente agrega cartas comunitarias, luego toca Calcular Probabilidades para ver tu probabilidad de victoria.";

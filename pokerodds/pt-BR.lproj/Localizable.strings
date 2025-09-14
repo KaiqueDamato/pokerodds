@@ -1,0 +1,132 @@
+/* 
+  Localizable.strings (Portuguese - Brazil)
+  PokerOdds
+  
+  Created on 12/09/2025.
+*/
+
+// App General
+"Poker Odds" = "Poker Odds";
+"Texas Hold'em Calculator" = "Calculadora Texas Hold'em";
+"Calculate your winning odds against one opponent" = "Calcule suas probabilidades de vitória contra um oponente";
+
+// Sections
+"Your Hand" = "Sua Mão";
+"Board" = "Mesa";
+
+// Buttons
+"Calculate Odds" = "Calcular Probabilidade";
+"Clear" = "Limpar";
+"Clear All" = "Limpar Tudo";
+"Cancel" = "Cancelar";
+"Done" = "Concluir";
+"Settings" = "Configurações";
+"Help" = "Ajuda";
+
+// Card Positions
+"Card 1" = "Carta 1";
+"Card 2" = "Carta 2";
+"Player Card 1" = "Carta do Jogador 1";
+"Player Card 2" = "Carta do Jogador 2";
+"Flop 1" = "Flop 1";
+"Flop 2" = "Flop 2";
+"Flop 3" = "Flop 3";
+"Turn" = "Turn";
+"River" = "River";
+"Community Card 1" = "Carta Comunitária 1";
+"Community Card 2" = "Carta Comunitária 2";
+"Community Card 3" = "Carta Comunitária 3";
+"Community Card 4" = "Carta Comunitária 4";
+"Community Card 5" = "Carta Comunitária 5";
+
+// Card Picker
+"Select Card" = "Selecionar Carta";
+"Clear Selection" = "Limpar Seleção";
+"Used cards are grayed out" = "Cartas usadas estão em cinza";
+
+// Results
+"Win" = "Vitória";
+"Tie" = "Empate";
+"Loss" = "Derrota";
+"Simulation Results" = "Resultados da Simulação";
+"%@ scenarios analyzed" = "%@ cenários analisados";
+"%@ scenarios" = "%@ cenários";
+"%@ out of %@ scenarios" = "%@ de %@ cenários";
+"Execution Time" = "Tempo de Execução";
+"Win/Loss Ratio" = "Proporção Vitória/Derrota";
+
+// Settings
+"Simulation" = "Simulação";
+"Fast Mode" = "Modo Rápido";
+"8,000 iterations for quicker results" = "8.000 iterações para resultados mais rápidos";
+"Iterations" = "Iterações";
+"Estimated Time" = "Tempo Estimado";
+"Quick Actions" = "Ações Rápidas";
+"Reset All Cards" = "Redefinir Todas as Cartas";
+"Information" = "Informação";
+"Version" = "Versão";
+"Game Variant" = "Variante do Jogo";
+"Texas Hold'em (Heads-up)" = "Texas Hold'em (Heads-up)";
+"Method" = "Método";
+"Monte Carlo Simulation" = "Simulação Monte Carlo";
+
+// Hand Ranks
+"High Card" = "Carta Alta";
+"Pair" = "Par";
+"Two Pair" = "Dois Pares";
+"Three of a Kind" = "Trinca";
+"Straight" = "Sequência";
+"Flush" = "Flush";
+"Full House" = "Full House";
+"Four of a Kind" = "Quadra";
+"Straight Flush" = "Straight Flush";
+"Royal Flush" = "Royal Flush";
+
+// Progress and Status
+"Simulating..." = "Simulando…";
+"< 1 second" = "< 1 segundo";
+"~%@ seconds" = "~%@ segundos";
+"~%@ minutes" = "~%@ minutos";
+"s" = "s";
+
+// Empty State
+"Ready to Calculate" = "Pronto para Calcular";
+"Select your 2 hole cards to get started" = "Selecione suas 2 cartas para começar";
+"Community cards are optional" = "Cartas comunitárias são opcionais";
+
+// Error Messages
+"Duplicate cards detected" = "Cartas duplicadas detectadas";
+"Select exactly 2 cards for your hand" = "Selecione exatamente 2 cartas para sua mão";
+"Card already selected" = "Carta já selecionada";
+"Minimum 5,000 iterations required" = "Mínimo de 5.000 iterações necessárias";
+"Maximum 100,000 iterations allowed" = "Máximo de 100.000 iterações permitidas";
+"Simulation failed" = "Simulação falhou";
+
+// Accessibility
+"Settings button" = "Botão de configurações";
+"Remove card" = "Remover carta";
+"Tap to change card" = "Toque para alterar carta";
+"Empty card slot - %@" = "Slot de carta vazio - %@";
+"Tap to select a card" = "Toque para selecionar uma carta";
+"Calculate poker odds" = "Calcular probabilidades de poker";
+"Cancel simulation" = "Cancelar simulação";
+"Dismiss error" = "Dispensar erro";
+"Swipe right to dismiss" = "Deslize para a direita para dispensar";
+"Error: %@" = "Erro: %@";
+"Card already selected" = "Carta já selecionada";
+"Tap to select this card" = "Toque para selecionar esta carta";
+"Disabled card hint" = "Carta já selecionada";
+"Ready to calculate poker odds. Select your 2 hole cards to get started. Community cards are optional." = "Pronto para calcular probabilidades. Selecione suas 2 cartas para começar. Cartas comunitárias são opcionais.";
+"Simulation results: Win %@, Tie %@, Loss %@" = "Resultados da simulação: Vitória %@, Empate %@, Derrota %@";
+
+// Settings Descriptions
+"Monte Carlo simulation randomly deals opponent cards and completes the board to calculate winning probabilities." = "A simulação Monte Carlo distribui aleatoriamente cartas do oponente e completa a mesa para calcular probabilidades de vitória.";
+"This calculator simulates thousands of random scenarios to estimate your winning probability against one unknown opponent in Texas Hold'em poker." = "Esta calculadora simula milhares de cenários aleatórios para estimar sua probabilidade de vitória contra um oponente desconhecido no poker Texas Hold'em.";
+"Results are statistical estimates and may vary between simulations." = "Os resultados são estimativas estatísticas e podem variar entre simulações.";
+"Fewer" = "Menos";
+"More Accurate" = "Mais Preciso";
+
+// Confirmation Dialogs
+"Reset All Data" = "Redefinir Todos os Dados";
+"This will clear all selected cards and results. This action cannot be undone." = "Isto limpará todas as cartas selecionadas e resultados. Esta ação não pode ser desfeita.";
+"Reset" = "Redefinir";
