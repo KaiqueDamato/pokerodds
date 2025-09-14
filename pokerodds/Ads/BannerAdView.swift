@@ -66,8 +66,8 @@ struct AdBannerContainer: View {
             if showAd {
                 if adManager.bannerAdLoaded {
                     BannerAdView()
-                        .frame(maxWidth: .infinity, maxHeight: 50)
-                        .frame(height: 50)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: max(50, adManager.bannerAd?.bounds.height ?? 50))
                         .background(Color(.systemBackground))
                         .clipped()
                 } else {

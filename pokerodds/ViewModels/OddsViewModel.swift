@@ -74,6 +74,20 @@ class OddsViewModel: ObservableObject {
     /// Controla exibição do seletor de cartas
     @Published var showingCardPicker: Bool = false
     
+    // MARK: - Premium Features
+    
+    /// Indica se o modo de alta precisão está ativo
+    @Published var isHighPrecisionModeActive: Bool = false
+    
+    /// Timestamp quando o modo premium expira
+    private var premiumModeExpiryTime: Date?
+    
+    /// Timer para atualização do tempo restante
+    private var premiumTimer: Timer?
+    
+    /// Força atualização do tempo restante na UI
+    @Published private var timeUpdateTrigger = false
+    
     /// Posição atual sendo editada no picker
     @Published var currentEditingPosition: CardPosition?
     
@@ -154,6 +168,96 @@ class OddsViewModel: ObservableObject {
                 ]
                 return index < positions.count ? positions[index] : NSLocalizedString("Community Card \(index + 1)", comment: "Card position")
             }
+        }
+    }
+    
+    // MARK: - Premium Features Methods
+    
+    /// Ativa o modo de alta precisão temporariamente
+    func activateHighPrecisionMode() {
+        isHighPrecisionModeActive = true
+        premiumModeExpiryTime = Date().addingTimeInterval(AdConfiguration.premiumFeatureDuration)
+        
+        // Define iterações para modo premium
+        if !fastMode {
+            iterationsCount = AdConfiguration.maxPremiumIterations
+        }
+        
+        // Agenda verificação de expiração
+        scheduleExpirationCheck()
+    }
+    
+    /// Verifica se o modo premium ainda está ativo
+    private func checkPremiumModeExpiry() {
+        guard let expiryTime = premiumModeExpiryTime else { return }
+        
+        if Date() >= expiryTime {
+            deactivateHighPrecisionMode()
+        }
+    }
+    
+    /// Desativa o modo de alta precisão
+    private func deactivateHighPrecisionMode() {
+        isHighPrecisionModeActive = false
+        premiumModeExpiryTime = nil
+        
+        // Para o timer
+        premiumTimer?.invalidate()
+        premiumTimer = nil
+        
+        // Volta para iterações padrão se não estiver em fast mode
+        if !fastMode && iterationsCount > 100000 {
+            iterationsCount = 100000
+        }
+    }
+    
+    /// Agenda verificação de expiração do modo premium
+    private func scheduleExpirationCheck() {
+        // Para timer anterior se existir
+        premiumTimer?.invalidate()
+        
+        // Cria novo timer para atualizar o tempo restante a cada segundo
+        premiumTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            guard let self = self else {
+                timer.invalidate()
+                return
+            }
+            
+            // Força atualização da UI no main thread
+            DispatchQueue.main.async {
+                // Força uma atualização das propriedades @Published
+                self.timeUpdateTrigger.toggle()
+                
+                // Verifica se deve expirar
+                self.checkPremiumModeExpiry()
+                
+                // Para o timer quando o modo expira
+                if !self.isHighPrecisionModeActive {
+                    timer.invalidate()
+                    self.premiumTimer = nil
+                }
+            }
+        }
+    }
+    
+    /// Tempo restante do modo premium em segundos
+    var premiumTimeRemaining: TimeInterval {
+        guard let expiryTime = premiumModeExpiryTime else { return 0 }
+        return max(0, expiryTime.timeIntervalSinceNow)
+    }
+    
+    /// Texto formatado do tempo restante
+    var premiumTimeRemainingText: String {
+        let remaining = premiumTimeRemaining
+        if remaining <= 0 { return "" }
+        
+        let minutes = Int(remaining) / 60
+        let seconds = Int(remaining) % 60
+        
+        if minutes > 0 {
+            return "\(minutes)m \(seconds)s"
+        } else {
+            return "\(seconds)s"
         }
     }
     
@@ -248,7 +352,9 @@ class OddsViewModel: ObservableObject {
     
     /// Atualiza número de iterações com validação
     func updateIterations(_ newValue: Int) {
-        iterationsCount = max(5000, min(100000, newValue))
+        // Permite mais iterações se o modo de alta precisão estiver ativo
+        let maxIterations = isHighPrecisionModeActive ? AdConfiguration.maxPremiumIterations : 100000
+        iterationsCount = max(5000, min(maxIterations, newValue))
     }
     
     // MARK: - Private Methods
@@ -312,8 +418,11 @@ class OddsViewModel: ObservableObject {
             return NSLocalizedString("Minimum 5,000 iterations required", comment: "Validation error")
         }
         
-        if iterationsCount > 100000 {
-            return NSLocalizedString("Maximum 100,000 iterations allowed", comment: "Validation error")
+        // Permite mais iterações se o modo de alta precisão estiver ativo
+        let maxIterations = isHighPrecisionModeActive ? AdConfiguration.maxPremiumIterations : 100000
+        if iterationsCount > maxIterations {
+            let maxText = isHighPrecisionModeActive ? "200,000" : "100,000"
+            return NSLocalizedString("Maximum \(maxText) iterations allowed", comment: "Validation error")
         }
         
         return nil

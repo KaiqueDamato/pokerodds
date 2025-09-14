@@ -82,8 +82,8 @@ class MonteCarloEngine {
             return nil
         }
         
-        guard iterations >= 5000 && iterations <= 100000 else {
-            print("Erro: Iterações devem estar entre 5.000 e 100.000")
+        guard iterations >= 5000 && iterations <= AdConfiguration.maxPremiumIterations else {
+            print("Erro: Iterações devem estar entre 5.000 e \(AdConfiguration.maxPremiumIterations)")
             return nil
         }
         

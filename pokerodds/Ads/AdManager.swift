@@ -90,7 +90,12 @@ class AdManager: NSObject, ObservableObject {
     
     func createBannerAd() -> BannerView {
         print("🎯 Criando novo BannerView...")
-        let banner = BannerView(adSize: AdSizeBanner)
+        
+        // Usa o tamanho padrão do banner (320x50) que sempre funciona
+        let adSize = AdSizeBanner
+        print("   Tamanho do banner: \(adSize.size.width)x\(adSize.size.height)")
+        
+        let banner = BannerView(adSize: adSize)
         banner.adUnitID = bannerAdUnitID
         banner.delegate = self
         

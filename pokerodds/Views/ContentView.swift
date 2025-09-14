@@ -189,6 +189,39 @@ struct ContentView: View {
                 .foregroundColor(.secondary.opacity(0.8))
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
+            
+            // Premium status banner
+            if viewModel.isHighPrecisionModeActive {
+                HStack(spacing: 8) {
+                    Image(systemName: "crown.fill")
+                        .foregroundColor(.green)
+                        .font(.caption)
+                    
+                    Text("High Precision Mode Active")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.green)
+                    
+                    Spacer()
+                    
+                    if !viewModel.premiumTimeRemainingText.isEmpty {
+                        Text(viewModel.premiumTimeRemainingText)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.green.opacity(0.1))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                        )
+                )
+                .transition(.scale.combined(with: .opacity))
+            }
         }
         .padding(.top, 8)
     }

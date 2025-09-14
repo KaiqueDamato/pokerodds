@@ -77,7 +77,45 @@ struct SettingsSheet: View {
             
             // Iterations count
             if !viewModel.fastMode {
-                iterationsSlider
+                if viewModel.isHighPrecisionModeActive {
+                    // Mostra status do modo premium
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Iterations")
+                                .font(.body)
+                            
+                            HStack {
+                                Text("200,000")
+                                    .font(.footnote)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.green)
+                                
+                                Image(systemName: "crown.fill")
+                                    .foregroundColor(.green)
+                                    .font(.caption)
+                                
+                                Text("(High Precision)")
+                                    .font(.caption)
+                                    .foregroundColor(.green)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        Text("Premium Active")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.green)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.green.opacity(0.1))
+                            )
+                    }
+                } else {
+                    iterationsSlider
+                }
             }
             
             // Estimated time
@@ -151,33 +189,83 @@ struct SettingsSheet: View {
     private var premiumFeaturesSection: some View {
         Section {
             // High precision simulation
-            RewardedAdButton(
-                title: NSLocalizedString("High Precision Mode", comment: "Premium feature title"),
-                subtitle: NSLocalizedString("Unlock 200,000 iterations for maximum accuracy", comment: "Premium feature description"),
-                icon: "speedometer"
-            ) {
-                // Unlock high precision temporarily
-                viewModel.updateIterations(200000)
-                
-                // Show success message
-                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-                impactFeedback.impactOccurred()
-            }
-            
-            // Detailed analysis (future feature)
-            RewardedAdButton(
-                title: NSLocalizedString("Street Analysis", comment: "Premium feature title"),
-                subtitle: NSLocalizedString("Coming soon: Odds breakdown by street", comment: "Premium feature description"),
-                icon: "chart.bar.fill"
-            ) {
-                // Future feature - detailed street-by-street analysis
-                print("Street analysis feature unlocked (coming soon)")
+            if viewModel.isHighPrecisionModeActive {
+                // Modo ativo - mostra status
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Image(systemName: "speedometer")
+                            .foregroundColor(.green)
+                            .font(.title3)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack {
+                                Text("High Precision Mode")
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                    .font(.footnote)
+                            }
+                            
+                            Text("✨ 200,000 iterations ativo")
+                                .font(.footnote)
+                                .foregroundColor(.green)
+                        }
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text("Ativo")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.green)
+                            
+                            if !viewModel.premiumTimeRemainingText.isEmpty {
+                                Text(viewModel.premiumTimeRemainingText)
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    
+                    // Barra de progresso do tempo restante
+                    if viewModel.premiumTimeRemaining > 0 {
+                        ProgressView(value: viewModel.premiumTimeRemaining, total: AdConfiguration.premiumFeatureDuration)
+                            .progressViewStyle(LinearProgressViewStyle(tint: .green))
+                            .scaleEffect(y: 0.5)
+                    }
+                }
+                .padding(.vertical, 4)
+            } else {
+                // Modo inativo - botão para ativar
+                RewardedAdButton(
+                    title: NSLocalizedString("High Precision Mode", comment: "Premium feature title"),
+                    subtitle: NSLocalizedString("Unlock 200,000 iterations for maximum accuracy", comment: "Premium feature description"),
+                    icon: "speedometer"
+                ) {
+                    // Ativa o modo de alta precisão
+                    viewModel.activateHighPrecisionMode()
+                    
+                    // Feedback háptico de sucesso
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    
+                    // Fecha o sheet após um delay para mostrar o feedback
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        dismiss()
+                    }
+                }
             }
             
         } header: {
             Text(NSLocalizedString("Premium Features", comment: "Premium section header"))
         } footer: {
-            Text(NSLocalizedString("Watch short ads to unlock premium features temporarily. No subscription required!", comment: "Premium section footer"))
+            if viewModel.isHighPrecisionModeActive {
+                Text("O modo de alta precisão está ativo e expirará automaticamente em \(Int(AdConfiguration.premiumFeatureDuration / 60)) minutos.")
+            } else {
+                Text(NSLocalizedString("Watch short ads to unlock premium features temporarily. No subscription required!", comment: "Premium section footer"))
+            }
         }
     }
     
