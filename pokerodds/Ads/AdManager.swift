@@ -91,6 +91,13 @@ class AdManager: NSObject, ObservableObject {
     func createBannerAd() -> BannerView {
         print("🎯 Criando novo BannerView...")
         
+        // Limpa banner anterior se existir
+        if let oldBanner = _bannerAd {
+            oldBanner.delegate = nil
+            oldBanner.rootViewController = nil
+            print("🧹 Banner anterior removido")
+        }
+        
         // Usa o tamanho padrão do banner (320x50) que sempre funciona
         let adSize = AdSizeBanner
         print("   Tamanho do banner: \(adSize.size.width)x\(adSize.size.height)")
@@ -110,6 +117,13 @@ class AdManager: NSObject, ObservableObject {
         }
         
         self._bannerAd = banner
+        
+        // Carrega automaticamente; o estado @Published será atualizado pelos delegates
+        // Isto ocorre fora do ciclo de atualização do SwiftUI (setup inicial ou chamadas explícitas)
+        DispatchQueue.main.async { [weak self] in
+            self?.loadBannerAd()
+        }
+        
         return banner
     }
     
@@ -119,29 +133,66 @@ class AdManager: NSObject, ObservableObject {
             return
         }
         
+        // Permite recarregamento para garantir banner limpo
+        
         print("🔄 Carregando banner ad com ID: \(bannerAdUnitID)")
         print("   Banner delegate configurado: \(banner.delegate != nil)")
         print("   Root view controller configurado: \(banner.rootViewController != nil)")
+        print("   Banner frame: \(banner.frame)")
+        print("   Banner bounds: \(banner.bounds)")
+        
+        // Garante que o root view controller está configurado antes de carregar
+        guard banner.rootViewController != nil else {
+            print("⚠️ Root view controller não configurado - tentando configurar...")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.loadBannerAd()
+            }
+            return
+        }
         
         let request = Request()
         banner.load(request)
         
-        // Timeout de segurança - se não carregar em 10 segundos, tenta novamente
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { [weak self] in
+        // Timeout de segurança - se não carregar em 15 segundos, tenta novamente
+        DispatchQueue.main.asyncAfter(deadline: .now() + 15.0) { [weak self] in
             if !(self?.bannerAdLoaded ?? true) {
-                print("⏰ Timeout do banner ad - tentando recarregar...")
-                self?.loadBannerAd()
+                print("⏰ Timeout do banner ad - recriando banner...")
+                self?.bannerAdLoaded = false
+                self?.forceLoadBannerAd()
             }
         }
+    }
+    
+    /// Carrega o banner manualmente (evita publishing durante view updates)
+    func loadBannerAdManually() {
+        print("🔄 Carregando banner manualmente...")
+        loadBannerAd()
+    }
+
+    /// Registra um banner criado externamente (ex.: camada SwiftUI) sem disparar mudanças publicadas
+    func registerExternalBanner(_ banner: BannerView) {
+        print("🔗 Registrando banner externo no AdManager")
+        _bannerAd = banner
     }
     
     /// Força o carregamento do banner ad (útil para debug)
     func forceLoadBannerAd() {
         print("🔧 Forçando carregamento do banner ad...")
-        if _bannerAd == nil {
-            _ = createBannerAd()
+        
+        // Reset completo do estado
+        bannerAdLoaded = false
+        
+        // Limpa banner anterior completamente
+        if let oldBanner = _bannerAd {
+            oldBanner.delegate = nil
+            oldBanner.rootViewController = nil
+            print("🧹 Banner anterior completamente removido")
         }
-        loadBannerAd()
+        _bannerAd = nil
+        
+        // Cria novo banner e carrega manualmente
+        _ = createBannerAd()
+        loadBannerAdManually()
     }
     
     func hideBannerDuringSimulation() {
@@ -395,20 +446,35 @@ class AdManager: NSObject, ObservableObject {
 extension AdManager: BannerViewDelegate {
     func bannerViewDidReceiveAd(_ bannerView: BannerView) {
         print("✅ Banner ad carregado com sucesso!")
-        print("   Banner size: \(bannerView.frame.size)")
-        bannerAdLoaded = true
+        print("   Banner frame size: \(bannerView.frame.size)")
+        print("   Banner adSize: \(bannerView.adSize.size)")
+        
+        // Validação de dimensões
+        if bannerView.adSize.size.width > 0 && bannerView.adSize.size.height > 0 {
+            bannerAdLoaded = true
+            print("✅ Banner com dimensões válidas")
+        } else {
+            print("❌ Banner carregado mas com dimensões inválidas!")
+            bannerAdLoaded = false
+        }
     }
     
     func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
         print("❌ Erro ao carregar banner: \(error.localizedDescription)")
         print("   Error code: \((error as NSError).code)")
         print("   Error domain: \((error as NSError).domain)")
+        print("   Banner frame: \(bannerView.frame)")
+        print("   Banner bounds: \(bannerView.bounds)")
+        print("   Banner adSize: \(bannerView.adSize.size)")
+        print("   Banner adUnitID: \(bannerView.adUnitID ?? "nil")")
+        print("   Banner rootViewController: \(bannerView.rootViewController != nil)")
+        
         bannerAdLoaded = false
         
-        // Tenta recarregar após 5 segundos em caso de erro
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
+        // Tenta recarregar após 3 segundos em caso de erro
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
             print("🔄 Tentando recarregar banner após erro...")
-            self?.loadBannerAd()
+            self?.forceLoadBannerAd()
         }
     }
     
@@ -445,3 +511,4 @@ extension AdManager: FullScreenContentDelegate {
         isShowingInterstitial = false
     }
 }
+

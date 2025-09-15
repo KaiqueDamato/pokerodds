@@ -114,6 +114,12 @@ struct ContentView: View {
                 // Banner ad fixo na parte inferior, respeitando safe area
                 AdBannerContainer(showAd: shouldShowBanner)
                     .background(Color(.systemBackground))
+                    .onAppear {
+                        print("🎯 AdBannerContainer apareceu!")
+                        print("   shouldShowBanner: \(shouldShowBanner)")
+                        print("   adManager.showBannerAd: \(adManager.showBannerAd)")
+                        print("   adManager.bannerAdLoaded: \(adManager.bannerAdLoaded)")
+                    }
             }
             .navigationTitle(NSLocalizedString("Poker Odds", comment: "App title"))
             .navigationBarTitleDisplayMode(.large)
