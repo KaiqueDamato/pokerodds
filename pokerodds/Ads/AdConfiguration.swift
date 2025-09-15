@@ -22,8 +22,8 @@ struct AdConfiguration {
     // Configure com seus IDs reais para produção
     
     static let productionBannerAdUnitID = "ca-app-pub-8913194362956705/3008362472"
-    static let productionInterstitialAdUnitID = "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Configure seu ID
-    static let productionRewardedAdUnitID = "ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX" // Configure seu ID
+    static let productionInterstitialAdUnitID = "ca-app-pub-8913194362956705/2972208610" // Configure seu ID
+    static let productionRewardedAdUnitID = "ca-app-pub-8913194362956705/9346045279" // Configure seu ID
     
     // MARK: - Current Configuration
     
