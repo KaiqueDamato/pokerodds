@@ -133,7 +133,8 @@ struct ContentView: View {
             }
             .sheet(isPresented: $viewModel.showingSettings) {
                 SettingsSheet(viewModel: viewModel)
-                    .presentationDetents([.medium, .large])
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
             }
             .sheet(isPresented: $viewModel.showingCardPicker) {
                 if let position = viewModel.currentEditingPosition {
